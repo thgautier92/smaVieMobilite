@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Rdv #{{rdvId}} - {{titleRdv}}</ion-title>
+    <button start menuToggle><ion-icon name="menu"></ion-icon></button>
+    <!-- <button end menuToggle="menuCli"><ion-icon name="people"></ion-icon></button> -->
+    <button end menuToggle="menuRdv"><ion-icon name="options"></ion-icon></button>
+  </ion-navbar>
+</ion-header>
+<ion-menu type="overlay" danger id="menuRdv" [content]="contentRdv" side="right">
+  <ion-toolbar danger>
+    <ion-title>
+      <ion-icon name="options"></ion-icon> Options</ion-title>
+    <ion-buttons start>
+      <button menuClose="menuRdv">Fermer</button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-content>
+    <ion-list>
+      <ion-list-header>Changer de dossier</ion-list-header>
+      <ion-item menuClose="menuCli" menuToggle="menuRdv" ion-item *ngFor="let cli of lstCli;let i = index" (click)="start(i)" [ngClass]="{
+                        'soc' : cli.etatVie=='SOCIETAIRE',
+                        'prosp' : cli.etatVie=='PROSPECT'}">
+        <ion-icon *ngIf="cli.rdvStatus" item-right name="logo-tux"></ion-icon>
+        <h5>#{{cli.clientId}} {{cli.clientName}} <span *ngIf="cli.clientPrenom!=='null'">{{cli.clientPrenom}}</span></h5>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-list-header>Options</ion-list-header>
+      <button menuClose="menuRdv" ion-item *ngFor="let opt of rdvMenu" (click)="callMenu(opt)" detail-push>
+        <ion-icon *ngIf="opt.nav!=''" item-left name="{{opt.icon}}"></ion-icon>{{opt.lib}}
+        </button>
+      <button full danger menuClose="menuRdv" (click)="rdvEnd()"><ion-icon item-left name="contacts"></ion-icon> Terminer le RDV</button>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-content #contentRdv class="rdv">
+  <ion-tabs #rdvTabs *ngIf="currentContext" tabsPlacement="top" tabsLayout="icon-left">
+  <ion-tab *ngFor="let item of dataMenu, let i = index" color="secondary" [tabIcon]="item.icon" [tabTitle]="item.lib" [root]="item.page"
+    [rootParams]="retrieveData(i)" [tabBadge]="getStyle(item.status,'lib')" [tabBadgeStyle]="getStyle(item.status,'color')"
+    preloadTabs="false">
+  </ion-tab>
+</ion-tabs>
+</ion-content>

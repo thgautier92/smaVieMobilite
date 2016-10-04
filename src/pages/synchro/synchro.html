@@ -1,0 +1,67 @@
+<!--
+  Generated template for the SynchroPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="danger">
+    <ion-title>
+      <ion-icon name="wifi"></ion-icon> Synchronisation</ion-title>
+    <button ion-button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  </ion-navbar>
+</ion-header>
+<ion-content no-padding class="synchro">
+  <button ion-button color="primary" (click)="startSync()">Synchroniser {{params.base}}</button>
+  <button ion-button color="primary" (click)="delDb()">Effacer</button>
+  <button ion-button color="action" fab fab-right fab-bottom color="favorite" (click)="showBase()"><ion-icon name="refresh"></ion-icon></button>
+  <ion-card>
+    <ion-card-header>
+      <h3>Base : {{params.base}}
+        <span item-right [hidden]="docs['total_rows']==0"> {{docs['total_rows']}} rendez-vous</span>
+        </h3>
+      </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngIf="sync['timer']">
+        <button ion-button color="primary" clear item-left>
+          <ion-icon name="cloud-download"></ion-icon>
+          <div> {{sync['timer']['pull']}}ms</div>
+        </button>
+        <button ion-button color="primary" clear item-left>
+          <ion-icon name="cloud-upload"></ion-icon>
+          <div> {{sync['timer']['push']}}ms</div>
+        </button>
+        <button ion-button color="primary" clear item-rigth (click)="getSyncDetail()">
+          <ion-icon name="information-circle"></ion-icon>
+        </button>
+      </ion-item>
+      <ion-item *ngIf="sync['start']">
+        <h3 color="primary">Synchronisation en cours...</h3>
+        <p class="small wrap" color="favorite" *ngIf="sync['info']">Action de
+          <mark>{{sync['info']['direction']}}</mark>, le {{sync['info']['change']['start_time']}} :<br>{{sync['info']['change']['docs_read']}}
+          lectures,{{sync['info']['change']['docs_written']}} écritures, {{sync['info']['change']['doc_write_failures']}}
+          erreurs
+        </p>
+        <p class="small wrap" color="danger" *ngIf="sync['info']">Problème de synchronisation : {{sync['info']}}</p>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="docs.total_rows!==0">
+    <ion-card-content no-padding>
+      <ion-grid>
+        <ion-row wrap>
+          <ion-col width-20>
+            <ion-list>
+              <button ion-button *ngFor="let item of docs.rows;let i=index" (click)="getDocId(item)"> _id : {{item.id}}</button>
+            </ion-list>
+          </ion-col>
+          <ion-col width-80 no-padding>
+            <record [dataRecord]='detailDoc'></record>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

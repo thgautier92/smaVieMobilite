@@ -1,0 +1,65 @@
+<!--
+  Generated template for the FlexInput component.
+
+  See https://angular.io/docs/ts/latest/api/core/ComponentMetadata-class.html
+  for more info on Angular 2 Components.
+-->
+<div>
+  <!--<form *ngIf="okForm" (ngSubmit)="onSubmit()" [(ngFormModel)]="form" class="css-form"> -->
+  <form *ngIf="okForm" [formGroup]="form" class="css-form">
+    <ion-toolbar color="light" position="top">
+      <ion-title start>{{formTitle}}</ion-title>
+      <ion-buttons end>
+        <!--<button ion-button>Etat de votre saisie : {{menuCurrent.status}}</button> -->
+        <button ion-button color="primary" (click)="getReload($event)"><ion-icon name="refresh"></ion-icon></button>
+        <!--<button ion-button color="danger" (click)="diagNext('hold',$event)"><ion-icon name="square"></ion-icon></button>-->
+        <button ion-button color="favorite" (click)="diagNext('partial',$event)"><ion-icon name="pause"></ion-icon></button>
+        <button ion-button color="secondary" (click)="diagNext('completed',$event)"><ion-icon name="play"></ion-icon></button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-row wrap>
+      <ion-col *ngFor="let key of selectedFields | keys">
+        <ion-card>
+          <ion-card-header [hidden]="key.key==''">{{key.key}}</ion-card-header>
+          <ion-list>
+            <ion-item *ngFor="let field of key.value, let idx=index">
+              <ion-icon item-left class="fieldIcon" [ngClass]="{
+                  'ion-md-list' : field.type=='enum',
+                  'ion-md-calendar' : field.type=='date',
+                  'ion-md-text' : field.type=='text',
+                  'ion-md-calculator' : field.type=='number',
+                  'ion-md-call': field.type=='tel',
+                  'ion-md-mail' : field.type=='email',
+                  'ion-md-wifi' : field.type=='url',
+                  'ion-md-cloud-upload' : field.type=='urlData'}" (click)="initField(idx, field.model)">
+              </ion-icon>
+              <ion-label stacked>{{field.title}}</ion-label>
+              <ion-input clearInput *ngIf="field.type==='number'" type="number" [(formControlName)]="field.model"></ion-input>
+              <ion-input clearInput *ngIf="field.type==='text'" type="{{field.type}}" color="primary" [(formControlName)]="field.model" [required]="field.required"></ion-input>
+              <ion-input clearInput *ngIf="field.type==='date'" type="{{field.type}}" color="primary" [(formControlName)]="field.model" [required]="field.required"></ion-input>
+              <ion-input clearInput *ngIf="field.type==='tel'" type="{{field.type}}" color="primary" [(formControlName)]="field.model" [required]="field.required"></ion-input>
+              <ion-input clearInput *ngIf="field.type==='email'" type="{{field.type}}" [(formControlName)]="field.model" color="primary" [required]="field.required"></ion-input>
+              <ion-toggle *ngIf="field.type==='boolean'" checked="false" [(formControlName)]="field.model" [required]="field.required"></ion-toggle>
+
+              <button ion-button outline item-right *ngIf="field.type==='page'" (click)="openPage(field.default)"><ion-icon name="link"></ion-icon> démarrer</button>
+              <button ion-button outline item-right *ngIf="field.type==='url'" (click)="openSimu(field.default)"><ion-icon name="wifi"></ion-icon> démarrer</button>
+              <button ion-button outline item-right *ngIf="field.type==='urlData'" (click)="openSimuData(idx,field.model,field.default)"><ion-icon name="wifi"></ion-icon> démarrer</button>
+              <ion-note item-right *ngIf="field.type==='radio'">
+                <ion-list no-lines radio-group [(formControlName)]="field.model">
+                  <ion-item no-padding *ngFor="let b of field.enum | objToArray;let i=index">
+                    <ion-label no-padding  style="font-size: 1.3rem;">{{b.value}}</ion-label>
+                    <ion-radio no-padding [(value)]="b.key" [checked]="getCheck(field.model,b.key)"></ion-radio>
+                  </ion-item>
+                </ion-list>
+              </ion-note>
+              <ion-select clearInput *ngIf="field.type==='enum'" [(formControlName)]="field.model" cancelText="Annuler" okText="Choisir">
+                <ion-option value="">== Choisir une option ==</ion-option>
+                <ion-option *ngFor="let b of field.enum | objToArray" [value]="b.key">{{b.value}}</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </form>
+</div>

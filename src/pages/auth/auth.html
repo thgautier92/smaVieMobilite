@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Authentifiez-vous
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+    <div [hidden]="isAuth" text-center>
+      <img src="img/logo_smavie_actu2.jpg">
+        <form [formGroup]="loginCreds">
+          <ion-item>
+            <ion-label floating>Nom utilisateur</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label floating>Mot de passe</ion-label>
+            <ion-input type="password" formControlName="password"></ion-input>
+          </ion-item>
+
+          <div padding>
+            <button ion-button block [disabled]="!loginCreds.valid" (click)="login(loginCreds.value)">Se connecter</button>
+          </div>
+        </form>
+        <button ion-button clear (click)="createAccount()"><ion-icon name="people"></ion-icon>Vous n'avez pas de compte ?<br>Créer le...</button>
+    </div>
+    <div [hidden]="!isAuth">
+      <img src="img/logo_smavie_actu2.jpg">
+      <div padding text-center>
+        <h1>Bienvenue.</h1>
+        <button ion-button block (click)="restart()">Commencer</button>
+      </div>
+      <ion-toolbar position="bottom">
+        <p text-center>&copy; Groupe SMA - DSI/SMA Labs<br>R&D projet SMAVIE Mobilité<br>Juillet 2016</p>
+      </ion-toolbar>
+    </div>
+</ion-content>

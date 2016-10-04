@@ -1,0 +1,251 @@
+<!--
+  Generated template for the DiagConseilPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="secondary">
+    <ion-title>
+      <ion-icon name="contract"></ion-icon> Souscription</ion-title>
+    <ion-buttons end>
+      <button (click)="close()">Fermer</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="souscription">
+  <!--
+  <div *ngFor="let f of lstForms">
+    <flex-list *ngIf="f.pres=='list'" [idPageIn]=idPage [idForm]=f.id [formTitle]=f.title [dataIn]=dataIn [idClient]=idClient></flex-list>
+    <flex-input *ngIf="f.pres=='detail'" [idPageIn]=idPage [idForm]=f.id [formTitle]=f.title [dataIn]=dataIn [idClient]=idClient></flex-input>
+  </div>
+  -->
+  <ion-segment [(ngModel)]="etape" (ionChange)="doChange($event)">
+    <ion-segment-button color="primary" text-wrap *ngFor="let et of lstEtapes" [value]="et.code" [innerHTML]="et.lib">
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="etape">
+    <ion-card *ngSwitchCase="'pro'">
+      <ion-card-header>Ajouter une demande d'adhésion</ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-list-header color="secondary">
+            <ion-icon name="search"></ion-icon>
+            A partir d'une simulation existante
+          </ion-list-header>
+          <ion-item text-wrap *ngFor="let simu of histoSimu;let idx=index">
+            <ion-row>
+              <ion-col width-20><span color="primary">{{simu.simulateur}}</span></ion-col>
+              <ion-col width-10><span color="primary">{{simu.idSimu}}</span></ion-col>
+              <ion-col width-40 (click)="selSimu(simu)"><span color="secondary">{{simu.produit}}</span></ion-col>
+              <ion-col width-30><span danger>{{simu.dateSimu}}</span></ion-col>
+            </ion-row>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <ion-icon name="list-box"></ion-icon>
+              A partir d'un produit
+            </ion-label>
+            <ion-select [(ngModel)]="produit.code" okText="Choisir" cancelText="Annuler" placeholder="Choisir un produit" (ngModelChange)="changeProduit($events)">
+              <ion-option *ngFor="let p of lstProduit" [value]="p.code" [innerHTML]="p.produit"></ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item *ngIf="selProduit">
+            <ion-label>
+              <ion-icon name="list-box"></ion-icon>
+              Fiscalité
+            </ion-label>
+            <ion-select [(ngModel)]="produit.fiscalite" okText="Choisir" cancelText="Annuler">
+              <ion-option *ngFor="let p of selProduit.options" [value]="p.code" [innerHTML]="p.lib"></ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'ver'">
+      <ion-card-header></ion-card-header>
+      <ion-card-content>
+        <flex-input [idPageIn]=idPage idForm=20 formTitle='Versements' [dataIn]=dataIn [idClient]=idClient></flex-input>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'rep'">
+      <ion-card-header>
+        <ion-toolbar light position="top">
+          <ion-title start>Répartition des supports</ion-title>
+          <ion-buttons end>
+            <button outline color="primary" (click)="addSupport()"><ion-icon name="add"></ion-icon> Ajouter</button>
+            <button color="secondary" (click)="updateSupport(supportData)"><ion-icon name="play"></ion-icon></button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let r of supportData;let idx=index">
+            <ion-item>
+              <ion-select [(ngModel)]="r.support" okText="Choisir" cancelText="Annuler">
+                <ion-option value="">== Choisir un support ==</ion-option>
+                <ion-option *ngFor="let sup of lstSupports" [value]="sup.code">{{sup.lib}}</ion-option>
+              </ion-select>
+              <ion-input [(ngModel)]="r.support" type="text" placeholder="Code du support"></ion-input>
+              <ion-input [(ngModel)]="r.part" type="number" min=0 max=100 placeholder="Part du support"></ion-input>
+            </ion-item>
+            <button ion-button danger item-right icon-left (click)="removeSupport(idx)">
+              <ion-icon name="trash"></ion-icon> Suppr.
+            </button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'arb'">
+      <ion-card-header>
+        <ion-toolbar light position="top">
+          <ion-title start>Options d'arbitrage</ion-title>
+          <ion-buttons end>
+            <button outline color="primary" (click)="addArbitrage()"><ion-icon name="add"></ion-icon> Ajouter</button>
+            <button color="secondary" (click)="updateArbitrage()"><ion-icon name="play"></ion-icon></button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row wrap center *ngFor="let r of arbitrageData;let idx=index" class="arbitrage">
+            <ion-col width-10 text-wrap>{{r.lib}}</ion-col>
+            <ion-col>
+              <div [ngSwitch]="r.code">
+                <ion-list padding *ngSwitchCase="'#NA'">
+                </ion-list>
+                <ion-list padding *ngSwitchCase="'AC'">
+                  <ion-item *ngIf="r.data">
+                    <ion-label stacked>Zone à définir</ion-label>
+                    <ion-input [(ngModel)]="r.data.duree" type="text" placeholder=""></ion-input>
+                  </ion-item>
+                </ion-list>
+                <ion-list padding *ngSwitchCase="'GH'">
+                  <ion-item *ngIf="r.data">
+                    <ion-label stacked>Durée</ion-label>
+                    <ion-input [(ngModel)]="r.data.duree" type="number"></ion-input>
+                  </ion-item>
+                </ion-list>
+                <ion-list padding *ngSwitchCase="'VI'">
+                  <ion-item *ngIf="r.data">
+                    <ion-label stacked>Part BATI ACTIONS INVESTISSEMENT</ion-label>
+                    <ion-input [(ngModel)]="r.data.part_BAI" type="number"></ion-input>
+                  </ion-item>
+                  <ion-item padding *ngIf="r.data">
+                    <ion-label stacked>Part BATI ENTREPRENDRE EURO</ion-label>
+                    <ion-input [(ngModel)]="r.data" type="number"></ion-input>
+                  </ion-item>
+                </ion-list>
+                <ion-list padding *ngSwitchCase="'IP'">
+                  <ion-item *ngIf="r.data">
+                    <ion-label stacked>Montant</ion-label>
+                    <ion-input [(ngModel)]="r.data.montant" type="number"></ion-input>
+                  </ion-item>
+                  <ion-item padding *ngIf="r.data">
+                    <ion-label stacked>Durée</ion-label>
+                    <ion-input [(ngModel)]="r.data.duree" type="number"></ion-input>
+                  </ion-item>
+                  <ion-item padding *ngIf="r.data">
+                    <ion-label stacked>Périodicité</ion-label>
+                    <ion-select [(ngModel)]="r.data.periodicite" okText="Choisir" cancelText="Annuler">
+                      <ion-option *ngFor="let p of refPeriodicite" [value]="p.code">{{p.lib}}</ion-option>
+                    </ion-select>
+                  </ion-item>
+                  <ion-item>
+                    <h3>Supports</h3>
+                    <ion-buttons end>
+                      <button outline color="primary" (click)="addArbitrageSupport(r.data.support)"><ion-icon name="add"></ion-icon> Ajouter</button>
+                      <button color="secondary" (click)="updateArbitrageSupport(idx)"><ion-icon name="play"></ion-icon></button>
+                    </ion-buttons>
+                    <ion-list>
+                      <ion-item *ngFor="let item of supportArbitrageData;let idx=index">
+                        <ion-item>
+                          <ion-select [(ngModel)]="item.support" okText="Choisir" cancelText="Annuler">
+                            <ion-option value="">== Choisir un support ==</ion-option>
+                            <ion-option *ngFor="let sup of lstSupports" [value]="sup.code">{{sup.lib}}</ion-option>
+                          </ion-select>
+                          <ion-input [(ngModel)]="item.support" type="text" placeholder="Code du support"></ion-input>
+                          <ion-input [(ngModel)]="item.part" type="number" min=0 max=100 placeholder="Part du support"></ion-input>
+                        </ion-item>
+                        <button ion-button danger item-right icon-left (click)="removeArbitrageSupport(idx)">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+                      </ion-item>
+                    </ion-list>
+                  </ion-item>
+                </ion-list>
+              </div>
+            </ion-col>
+            <ion-col width-10 text-right>
+              <button ion-button clear item-right icon-left (click)="removeArbitrage(idx)">
+                    <ion-icon danger name="trash"></ion-icon>
+                  </button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'cp'">
+      <ion-card-header></ion-card-header>
+      <ion-card-content>
+        <flex-input [idPageIn]=idPage idForm=21 formTitle='Conditions Particulières' [dataIn]=dataIn [idClient]=idClient></flex-input>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'rel'">
+      <ion-card-header><button (click)="initREL()">Initialisation des relations</button></ion-card-header>
+      <ion-card-content>
+        <div *ngIf="relData!=[]">
+          <ion-card *ngFor="let client of relData;let idxCli=index">
+            <ion-card-header>{{client.clientId}} - {{client.name}}</ion-card-header>
+            <ion-card-content>
+              <ion-row *ngFor="let role of client.roles;let idxRol=index">
+                <ion-col width-20>{{role.lib}} ({{role.code}})</ion-col>
+                <ion-col>
+                  <div *ngIf="role.code=='payeur'">
+                    <ion-item inset>
+                      <ion-label>IBAN</ion-label>
+                      <ion-input [(ngModel)]="role.dataRole.iban" type="text" placeholder="IBAN"></ion-input>
+                    </ion-item>
+                    <ion-item inset>
+                      <ion-label>BIC</ion-label>
+                      <ion-input [(ngModel)]="role.dataRole.bic" type="text" placeholder="BIC"></ion-input>
+                    </ion-item>
+                  </div>
+                </ion-col>
+                <ion-col width-10 text-right>
+                  <button ion-button danger item-right icon-left (click)="removeRole(idxCli,idxRol)"><ion-icon name="trash"></ion-icon></button>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'ben'">
+      <ion-card-header color="primary">Clauses Bénéficiaires</ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let cl of refClauses;let idx=index">
+            {{cl.lib}}
+            <!-- <ion-label>{{cl.lib}}</ion-label><ion-checkbox color="primary" (checked)="false"></ion-checkbox> -->
+            <button *ngIf="cl.form!=''" ion-button outline item-right icon-left (click)="openClause(cl)">Compléments...</button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngSwitchCase="'pj'">
+      <ion-card-header>Liste des pièces jointes</ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let item of dataIn['rdv']['docsInput'];let idx=index">
+            <ion-avatar item-left>
+              <img [attr.src]="item.img64">
+            </ion-avatar>
+            <h2>{{item.idDoc}}. {{item.nature}} - {{item.reference}}</h2>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

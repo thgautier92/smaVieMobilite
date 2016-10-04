@@ -1,0 +1,40 @@
+<!--
+  Generated template for the DiagConseilPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="secondary">
+    <ion-title>
+      <ion-icon name="compass"></ion-icon> Diagnostic Conseil</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="close()">Fermer</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content padding class="diag-conseil">
+  <flex-display [idPageIn]=idPage idForm=1 formTitle="Connaissance Client nécéssaire au Diagnostic conseil" [dataIn]=dataIn [idClient]=idClient></flex-display>
+  <ion-card>
+    <ion-card-header text-center>
+      <button ion-button (click)="callProfil()">Définir le Profil de risque</button>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-row *ngIf="profilCalculated">
+        <ion-col width-33 text-center>
+          <button ion-button *ngIf="profilCalculated==1" color="light" round>Sécuritaire</button>
+          <button ion-button *ngIf="profilCalculated==2" color="favorite" round>Modèré</button>
+          <button ion-button *ngIf="profilCalculated==3" color="secondary" round>Dynamique</button>
+          <!-- <ion-range snaps="true" min="1" max="3" [(ngModel)]="profilCalculated" color="danger" pin="true"></ion-range>-->
+        </ion-col>
+        <ion-col width-77>
+          <h4 *ngIf="profilCalculated==1" color="light">A votre profil Sécuritaire correspond...blabla</h4>
+          <h4 *ngIf="profilCalculated==2" color="favorite">A votre profil Modéré correspond...blabla</h4>
+          <h4 *ngIf="profilCalculated==3" color="secondary">A votre profil Dynamique correspond...blabla</h4>
+        </ion-col>
+      </ion-row>
+      <flex-input *ngIf="profilCalculated" [idPageIn]=idPage idForm=31 formTitle="La SMAvie vous recommande les produits suivants"
+        [dataIn]=dataIn [idClient]=idClient></flex-input>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
